@@ -20,7 +20,7 @@ function Pokemon(props){
         ))
 
         let types = props.pokemon.types.map(each => (
-            <li>{each.type.name}</li>
+            <li>{each.type.name} <button onClick={props.handleTypeList} value={each.type.name}>See More Of This Type</button></li>
         ))
     return(
         <div>
@@ -38,7 +38,7 @@ function Pokemon(props){
         </div>
     )
     }
-    else return(<div>Search for a Pokemon</div>)
+    else return(<div></div>)
 }
 
 export default Pokemon

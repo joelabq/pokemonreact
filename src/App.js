@@ -2,8 +2,11 @@ import React from 'react'
 import SearchBox from './searchbox'
 import Pokemon from './Pokemon'
 import ViewAll from './ViewAll'
+import ViewTypes from './ViewTypes'
+
 
 const pokeAPI = 'https://pokeapi.co/api/v2/pokemon/'
+//types https://pokeapi.co/api/v2/type/normal
 
 class App extends React.Component {
   constructor(props){
@@ -11,44 +14,67 @@ class App extends React.Component {
     
     this.state = {
       currentSearch: '',
-      pokemon: []
+      pokemon: [],
+      types: [],
+      currentType: ''
+      
     }
   }
-    // async componentDidMount() {
-    //   const response = await fetch(pokeAPI+this.state.currentSearch)
-    //   const json = await response.json()
-    //   this.setState({pokemon: json})
-    // }
+   
 
-    async searchPokemon() {
-      const response = await fetch(pokeAPI+this.state.currentSearch)
+    async searchPokemon(search = this.state.currentSearch) {
+      const response = await fetch(pokeAPI+search)
       const json = await response.json()
       this.setState({pokemon: json})
     }
+    async searchTypes() {
+      const response = await fetch(`https://pokeapi.co/api/v2/type/${this.state.currentType}`)
+      const json = await response.json()
+      this.setState({types: json})
+    }
 
+ 
     handleSearch = (e) => {
       e.preventDefault();
       this.setState({pokemon: []})
       this.searchPokemon();
-      
-      
+      this.searchTypes();
     }
+
+    handleViewPokemon = (name) => {
+
+      this.setState({pokemon: []})
+      this.searchPokemon(name);
+    }
+
+
     handleInput = (e) => {
       this.setState({
               currentSearch: e.target.value 
       })
     }
-    handleViewAll = (e) => {
-      e.preventDefault();
-      alert("You Clicked the link!!!")
+    clearSearch = () => {
+      this.setState({pokemon: [] })
+
+    }
+    handleTypeList = (e) => {
+      //alert(e.target.value)
+      e.preventDefault()
+      //this.clearSearch()
+      this.setState({currentType: e.target.value})
+     
+      this.searchTypes()
     }
     render() {
+     
       return (
         <div>
-          <ViewAll handleViewAll={this.handleViewAll}/>
+          
+          <ViewAll onViewPokemon={this.handleViewPokemon} onViewAll={this.clearSearch} />
           <SearchBox handleSearch={this.handleSearch} handleInput = {this.handleInput}/>
           <br/>
-          <Pokemon pokemon={this.state.pokemon}/>
+          <Pokemon pokemon={this.state.pokemon} handleTypeList={this.handleTypeList} />
+          <ViewTypes types = {this.state.types}/>
       </div>
 
       )
